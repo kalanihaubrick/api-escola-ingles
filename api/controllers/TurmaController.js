@@ -51,12 +51,12 @@ class TurmaController {
         }
     }
 
-    static async deletaTurma (req,res) {
+    static async apagaTurma (req,res) {
         const { id } = req.params;
 
         try {
             await database.Turmas.destroy({ where: { id: Number(id) } })
-            return res.status(200).json({message: `Turma do id ${id} deletada!`})
+            return res.status(200).json({message: `Turma do id ${id} apagada!`})
             
         } catch (error) {
             return res.status(500).json(error.message)
