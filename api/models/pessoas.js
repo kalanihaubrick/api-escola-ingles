@@ -11,7 +11,7 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       Pessoas.hasMany(models.Turmas, {
-        foreignKey : 'docente_id'
+        foreignKey: 'docente_id'
       })
       Pessoas.hasMany(models.Matriculas, {
         foreignKey: 'estudante_id'
@@ -26,7 +26,13 @@ module.exports = (sequelize, DataTypes) => {
   }, {
     sequelize,
     modelName: 'Pessoas',
-    paranoid: true
+    paranoid: true,
+    defaultScope: {
+      where: { ativo: true }
+    },
+    scopes: {
+      todos: { where: {} },
+    }
   });
   return Pessoas;
 };
