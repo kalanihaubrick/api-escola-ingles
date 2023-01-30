@@ -157,6 +157,26 @@ class PessoaController {
         }
     }
 
+    static async pegaMatriculasPorTurma(req, res) {
+        const { turmaId } = req.params
+        try {
+            const todasAsMatriculas = await database.Matriculas.findAndCountAll({
+                where: {
+                    turma_id: Number(turmaId),
+                    status: 'confirmado'
+                },
+                // para limitar as buscas no banco
+                limit: 20,
+                //para order a busca, primeiro parametro a coluna e o segundo se é ascendente (ASC) ou descendente (DESC)
+                order: [['estudante_id', 'DESC']]
+            })
+            return res.status(200).json(todasAsMatriculas)
+        } catch (error) {
+            return res.status(500).json(error.message)
+
+        }
+    }
+
 
 }
 
