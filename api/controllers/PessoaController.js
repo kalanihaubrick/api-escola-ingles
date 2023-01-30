@@ -122,19 +122,26 @@ class PessoaController {
         }
     }
 
-    static async apagaMatricula(req, res) {
-        const { estudanteId, matriculaId } = req.params
+    static async pegaMatriculas(req, res) {
+        const { estudanteId } = req.params
         try {
-            await database.Matriculas.destroy({
-                where: {
-                    id: Number(matriculaId),
-                    estudante_id: Number(estudanteId)
-                }
-            })
-            return res.status(200).json({ message: `id ${matriculaId} apagado.` })
+            const pessoa = await database.Pessoas.findOne({ where: { id: Number(estudanteId) } })
+            const matriculas = await pessoa.getAulasMatriculadas()
+            return res.status(200).json(matriculas)
         } catch (error) {
             return res.status(500).json(error.message)
 
+        }
+    }
+
+    static async apagaMatricula(req, res) {
+        const { matriculaId } = req.params
+        try {
+            await database.Matriculas.destroy({ where: { id: Number(matriculaId) } })
+            return res.status(200).json({ mensagem: `id ${matriculaId} deletado` })
+
+        } catch (error) {
+            return res.status(500).json(error.message)
         }
     }
 
@@ -149,6 +156,8 @@ class PessoaController {
             return res.status(500).json(error.message)
         }
     }
+
+
 }
 
 module.exports = PessoaController
