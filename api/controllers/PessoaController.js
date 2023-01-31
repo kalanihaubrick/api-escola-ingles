@@ -94,16 +94,15 @@ class PessoaController {
     }
 
     static async criaMatricula(req, res) {
-        const { estudanteId } = req.params;
-        const novaMatricula = { ...req.body, estudante_id: Number(estudanteId) };
-
-        try {
-            const novaMatriculaCriada = await database.Matriculas.create(novaMatricula)
-            return res.status(200).json(novaMatriculaCriada)
-        } catch (error) {
-            return res.status(500).json(error.message)
-        }
+    const { estudanteId } = req.params
+    const novaMatricula = { ...req.body, estudante_id: Number(estudanteId) }
+    try {
+      const novaMatriculaCriada = await database.Matriculas.create(novaMatricula)
+      return res.status(200).json(novaMatriculaCriada)
+    } catch (error) {
+      return res.status(500).json(error.message)
     }
+  }
 
     static async atualizaMatricula(req, res) {
         const { estudanteId, matriculaId } = req.params
@@ -201,11 +200,14 @@ class PessoaController {
         const { estudanteId } = req.params;
 
         try {
-            await database.Pessoas
-                .update({ ativo: false }, { where: { id: Number(estudanteId) } })
-            await database.Matriculas
-                .update({ status: 'cancelado' }, { where: { estudante_id: Number(estudanteId) } })
-            return res.status(200).json({ message: `Matrículas referente ao estudante ${estudanteId} canceladas` })
+            database.sequelize.transaction(async transacao => {
+
+                await database.Pessoas
+                    .update({ ativo: false }, { where: { id: Number(estudanteId) } }, { transaction: transacao })
+                await database.Matriculas
+                    .update({ status: 'cancelado' }, { where: { estudante_id: Number(estudanteId) } }, { transaction: transacao })
+                return res.status(200).json({ message: `Matrículas referente ao estudante ${estudanteId} canceladas` })
+            })
         } catch (error) {
             res.status(500).json(error.message)
 
