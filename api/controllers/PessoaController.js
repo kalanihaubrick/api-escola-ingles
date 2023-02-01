@@ -24,7 +24,7 @@ class PessoaController {
     }
     static async pegaTodosEmails(req, res) {
         try {
-            const todosEmails = await database.Pessoas.findAll({ attributes: ['nome', 'email'] })
+            const todosEmails = await pessoasServices.pegaTodosOsRegistros({ attributes: ['nome', 'email'] })
             return res.status(200).json(todosEmails);
         } catch (error) {
             return res.status(500).json(error.message)
@@ -34,11 +34,7 @@ class PessoaController {
     static async pegaUmaPessoa(req, res) {
         const { id } = req.params
         try {
-            const umaPessoa = await database.Pessoas.scope('todos').findOne({
-                where: {
-                    id: Number(id)
-                }
-            })
+            const umaPessoa = await pessoasServices.pegaUmRegistro(Number(id))
             return res.status(200).json(umaPessoa)
         } catch (error) {
             return res.status(500).json(error.message)
@@ -49,7 +45,7 @@ class PessoaController {
         const novaPessoa = req.body;
 
         try {
-            const novaPessoaCriada = await database.Pessoas.create(novaPessoa)
+            const novaPessoaCriada = await pessoasServices.criaRegistro(novaPessoa)
             return res.status(200).json(novaPessoaCriada)
         } catch (error) {
             return res.status(500).json(error.message)
@@ -61,8 +57,8 @@ class PessoaController {
         const novasInfos = req.body
 
         try {
-            await database.Pessoas.scope('todos').update(novasInfos, { where: { id: Number(id) } })
-            const pessoaAtualizada = await database.Pessoas.scope('todos').findOne({ where: { id: Number(id) } })
+            await pessoasServices.atualizaTodosRegistros(novasInfos, { where: { id: Number(id) } })
+            const pessoaAtualizada = await pessoasServices.pegaUmRegistroScopo({ where: { id: Number(id) } })
             return res.status(200).json(pessoaAtualizada)
         } catch (error) {
             return res.status(500).json(error.message)
@@ -203,14 +199,9 @@ class PessoaController {
         const { estudanteId } = req.params;
 
         try {
-            database.sequelize.transaction(async transacao => {
+            await pessoasServices.cancelaPessoasEMatriculas(Number(estudanteId))
+            return res.status(200).json({ message: `Matrículas referente ao estudante ${estudanteId} canceladas` })
 
-                await database.Pessoas
-                    .update({ ativo: false }, { where: { id: Number(estudanteId) } }, { transaction: transacao })
-                await database.Matriculas
-                    .update({ status: 'cancelado' }, { where: { estudante_id: Number(estudanteId) } }, { transaction: transacao })
-                return res.status(200).json({ message: `Matrículas referente ao estudante ${estudanteId} canceladas` })
-            })
         } catch (error) {
             res.status(500).json(error.message)
 
