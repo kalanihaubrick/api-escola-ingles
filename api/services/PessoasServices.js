@@ -18,6 +18,12 @@ class PessoasServices extends Services {
             .findAll({ where: { ...where } })
     }
 
+    async atualizaRegistroScopo(dadosAtualizados, id, transacao = {}) {
+        return database[this.nomeDoModelo]
+            .scope('todos')
+            .update(dadosAtualizados, { where: { id: id } }, transacao)
+    }
+
     async atualizaTodosRegistros(dadosAtualizados, id, transacao = {}) {
         return database[this.nomeDoModelo]
             .scope('todos')
@@ -26,8 +32,8 @@ class PessoasServices extends Services {
 
     async pegaUmRegistroScopo(id) {
         return database[this.nomeDoModelo]
-        .scope('todos')
-        .findOne({ where: {id: id} })
+            .scope('todos')
+            .findOne({ where: { id: id } })
     }
 
 
