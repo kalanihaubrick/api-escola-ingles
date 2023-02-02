@@ -14,16 +14,6 @@ class MatriculasServices extends Services {
             }
         })
     }
-
-    async pegaUmaMatriculasPorTurma(id) {
-        return database[this.nomeDoModelo].findAndCountAll({
-            where: {
-                turma_id: id,
-                status: "confirmado"
-            }
-        })
-    }
-
     
 }
 
