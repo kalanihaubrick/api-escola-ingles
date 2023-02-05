@@ -3,8 +3,14 @@ const pessoasServices = new PessoasServices();
 
 class PessoaController {
     static async pegaPessoasAtivas(req, res) {
+        const {role} = req.query
+        const where = {}
+
+        role ? where.role = {} : null
+        role ? where.role = role : null
+        
         try {
-            const pessoasAtivas = await pessoasServices.pegaRegistrosAtivos()
+            const pessoasAtivas = await pessoasServices.pegaRegistrosAtivos(where)
             return res.status(200).json(pessoasAtivas)
         } catch (error) {
             return res.status(500).json(error.message)
@@ -12,6 +18,8 @@ class PessoaController {
     }
 
     static async pegaTodasAsPessoas(req, res) {
+        
+
         try {
             const todasAsPessoas = await pessoasServices.pegaTodosOsRegistros()
             return res.status(200).json(todasAsPessoas);
@@ -21,7 +29,7 @@ class PessoaController {
     }
     static async pegaTodosEmails(req, res) {
         try {
-            const todosEmails = await pessoasServices.pegaTodosOsRegistros({ attributes: ['nome', 'email'] })
+            const todosEmails = await pessoasServices.pegaTodosEmails()
             return res.status(200).json(todosEmails);
         } catch (error) {
             return res.status(500).json(error.message)
@@ -31,7 +39,7 @@ class PessoaController {
     static async pegaUmaPessoa(req, res) {
         const { id } = req.params
         try {
-            const umaPessoa = await pessoasServices.pegaUmRegistroScopo(Number(id))
+            const umaPessoa = await pessoasServices.pegaUmRegistroScopo({id: Number(id)})
             return res.status(200).json(umaPessoa)
         } catch (error) {
             return res.status(500).json(error.message)
@@ -55,7 +63,7 @@ class PessoaController {
 
         try {
             await pessoasServices.atualizaRegistroScopo(novasInfos, id)
-            const pessoaAtualizada = await pessoasServices.pegaUmRegistroScopo(Number(id))
+            const pessoaAtualizada = await pessoasServices.pegaUmRegistroScopo({id: Number(id)})
             return res.status(200).json(pessoaAtualizada)
         } catch (error) {
             return res.status(500).json(error.message)
@@ -79,7 +87,7 @@ class PessoaController {
         const { id } = req.params
 
         try {
-            await pessoasServices.apagaRegistro(id)
+            await pessoasServices.apagaRegistro({id: Number(id)})
             return res.status(200).json({ message: `id ${id} apagado.` })
         } catch (error) {
             return res.status(500).json(error.message)
@@ -91,7 +99,7 @@ class PessoaController {
         const { id } = req.params
 
         try {
-            await pessoasServices.restauraRegistro(id)
+            await pessoasServices.restauraRegistro({id: Number(id)})
             return res.status(200).json({ message: `id ${id} restaurado.` })
 
         } catch (error) {

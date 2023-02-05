@@ -26,13 +26,13 @@ class Services {
             .update(dadosAtualizados, { where: { ...where } }, transacao)
     }
 
-    async apagaRegistro(id) {
-        return database[this.nomeDoModelo].destroy({ where: { id: id } })
+    async apagaRegistro(where = {}) {
+        return database[this.nomeDoModelo].destroy({ where: {...where } })
 
     }
 
-    async restauraRegistro(id) {
-        return database[this.nomeDoModelo].restore({ where: { id: id } })
+    async restauraRegistro(where = {}) {
+        return database[this.nomeDoModelo].restore({ where: {...where} })
     }
 
     async encontraEContaRegistros(where = {}, agregadores) {

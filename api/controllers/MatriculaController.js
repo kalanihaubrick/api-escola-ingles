@@ -24,7 +24,7 @@ class MatriculaController {
     static async apagaMatricula(req, res) {
         const { matriculaId } = req.params
         try {
-            await matriculasServices.apagaRegistro(Number(matriculaId))
+            await matriculasServices.apagaRegistro({id: Number(matriculaId)})
             return res.status(200).json({ mensagem: `id ${matriculaId} deletado` })
 
         } catch (error) {
@@ -35,7 +35,7 @@ class MatriculaController {
     static async pegaMatriculas(req, res) {
         const { estudanteId } = req.params
         try {
-            const pessoa = await matriculasServices.pegaUmRegistro(Number(estudanteId))
+            const pessoa = await matriculasServices.pegaUmRegistro({id: Number(estudanteId)})
             const matriculas = await pessoa.getAulasMatriculadas()
             return res.status(200).json(matriculas)
         } catch (error) {
@@ -56,7 +56,7 @@ class MatriculaController {
                 }
 
             )
-            const matriculaAtualizada = await matriculasServices.pegaUmRegistro(Number(matriculaId))
+            const matriculaAtualizada = await matriculasServices.pegaUmRegistro({id: Number(matriculaId)})
             return res.status(200).json(matriculaAtualizada)
         } catch (error) {
             return res.status(500).json(error.message)

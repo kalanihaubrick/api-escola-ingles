@@ -9,13 +9,18 @@ class PessoasServices extends Services {
 
     async pegaRegistrosAtivos(where = {}) {
         return database[this.nomeDoModelo]
-            .findAll({ where: { ...where } })
+            .findAndCountAll({ where: { ...where } })
     }
 
     async pegaTodosOsRegistros(where = {}) {
         return database[this.nomeDoModelo]
             .scope('todos')
             .findAll({ where: { ...where } })
+    }
+
+    async pegaTodosEmails() {
+        return database[this.nomeDoModelo]
+        .findAll({attributes: ['nome', 'email']})
     }
 
     async atualizaRegistroScopo(dadosAtualizados, id, transacao = {}) {
@@ -30,10 +35,10 @@ class PessoasServices extends Services {
             .update(dadosAtualizados, { where: { id: id } }, transacao)
     }
 
-    async pegaUmRegistroScopo(id) {
+    async pegaUmRegistroScopo(where= {}) {
         return database[this.nomeDoModelo]
             .scope('todos')
-            .findOne({ where: { id: id } })
+            .findOne({ where: { ...where} })
     }
 
 
